@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Server sent events with php</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <h3>Click on the button to run the long task on the server side</h3>
+        <p>&nbsp;</p>
+        <div class="progress">
+            <div id="divProgress" class="progress-bar" style="min-width: 2em; width: 0%;">
+                <span id="spanProgress"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <button type="button" class="btn btn-primary" id="btnStart">Start Operation</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="task.js"></script>
+    <script type="text/javascript" language="javascript">
+        var _myTask = null;
+
+        $(document).ready(function() {
+            setProgress(0);
+
+            var btnStart = $("#btnStart");
+
+            btnStart.click(function() {
+                btnStart.addClass("disabled", "disabled");
+                setProgress(0);
+
+                _myTask = new LongTask({
+                    url: "longtask.php",
+                    onProgress: setProgress,
+                    onFinish: function() {
+                        btnStart.removeClass("disabled");
+                        alert("Finished!!!");
+                    },
+                    onError: function(e) {
+                        btnStart.removeClass("disabled");
+                        alert("Error on access to the task!!!");
+                    }
+                });
+            });
+        });
+
+        function setProgress(progress) {
+            $("#divProgress").css("width", progress + '%');
+            $("#spanProgress").text(progress + '%');
+        }
+    </script>
+</body>
+
+</html>
